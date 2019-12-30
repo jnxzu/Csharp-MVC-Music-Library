@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace C__MVC___Music_Library.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,7 @@ namespace C__MVC___Music_Library.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,10 +26,10 @@ namespace C__MVC___Music_Library.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 60, nullable: false),
                     ReleaseDate = table.Column<DateTime>(nullable: false),
                     Rating = table.Column<decimal>(nullable: false),
-                    ArtistId = table.Column<int>(nullable: true)
+                    ArtistId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,7 +39,7 @@ namespace C__MVC___Music_Library.Migrations
                         column: x => x.ArtistId,
                         principalTable: "Artists",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,10 +48,10 @@ namespace C__MVC___Music_Library.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(maxLength: 30, nullable: false),
                     Duration = table.Column<int>(nullable: false),
-                    AlbumId = table.Column<int>(nullable: true),
-                    ArtistId = table.Column<int>(nullable: true)
+                    AlbumId = table.Column<int>(nullable: false),
+                    ArtistId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,13 +61,13 @@ namespace C__MVC___Music_Library.Migrations
                         column: x => x.AlbumId,
                         principalTable: "Albums",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tracks_Artists_ArtistId",
                         column: x => x.ArtistId,
                         principalTable: "Artists",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
