@@ -1,0 +1,7 @@
+bin
+obj
+Properties
+*.json
+*.csproj
+features.txt
+*.db
