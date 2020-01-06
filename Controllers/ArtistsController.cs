@@ -1,10 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using C__MVC___Music_Library.Data;
 using C__MVC___Music_Library.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace C__MVC___Music_Library.Controllers
 {
@@ -32,7 +34,7 @@ namespace C__MVC___Music_Library.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ArtistId == id);
             if (artist == null)
             {
                 return NotFound();
@@ -42,7 +44,6 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // GET: Artists/Create
-        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
@@ -51,10 +52,9 @@ namespace C__MVC___Music_Library.Controllers
         // POST: Artists/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Artist artist)
+        public async Task<IActionResult> Create([Bind("ArtistId,Name")] Artist artist)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +66,6 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // GET: Artists/Edit/5
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,12 +84,11 @@ namespace C__MVC___Music_Library.Controllers
         // POST: Artists/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Artist artist)
+        public async Task<IActionResult> Edit(int id, [Bind("ArtistId,Name")] Artist artist)
         {
-            if (id != artist.Id)
+            if (id != artist.ArtistId)
             {
                 return NotFound();
             }
@@ -104,7 +102,7 @@ namespace C__MVC___Music_Library.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArtistExists(artist.Id))
+                    if (!ArtistExists(artist.ArtistId))
                     {
                         return NotFound();
                     }
@@ -119,7 +117,6 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // GET: Artists/Delete/5
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,7 +125,7 @@ namespace C__MVC___Music_Library.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ArtistId == id);
             if (artist == null)
             {
                 return NotFound();
@@ -138,7 +135,6 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // POST: Artists/Delete/5
-        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -151,7 +147,7 @@ namespace C__MVC___Music_Library.Controllers
 
         private bool ArtistExists(int id)
         {
-            return _context.Artists.Any(e => e.Id == id);
+            return _context.Artists.Any(e => e.ArtistId == id);
         }
     }
 }

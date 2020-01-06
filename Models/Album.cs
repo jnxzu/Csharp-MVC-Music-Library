@@ -5,7 +5,7 @@ namespace C__MVC___Music_Library.Models
 {
     public class Album
     {
-        public int Id { get; set; }
+        public int AlbumId { get; set; }
 
         [StringLength(60)]
         [Required]
@@ -19,6 +19,8 @@ namespace C__MVC___Music_Library.Models
         public decimal Rating { get; set; }
 
         [Required]
-        public Artist Artist { get; set; }
+        public int ArtistId { get; set; }
+
+        public virtual Artist Artist { get; set; }
     }
 }

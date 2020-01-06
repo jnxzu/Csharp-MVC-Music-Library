@@ -18,7 +18,7 @@ namespace C__MVC___Music_Library.Migrations
 
             modelBuilder.Entity("C__MVC___Music_Library.Models.Album", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AlbumId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -36,7 +36,7 @@ namespace C__MVC___Music_Library.Migrations
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("AlbumId");
 
                     b.HasIndex("ArtistId");
 
@@ -45,7 +45,7 @@ namespace C__MVC___Music_Library.Migrations
 
             modelBuilder.Entity("C__MVC___Music_Library.Models.Artist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ArtistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -54,59 +54,15 @@ namespace C__MVC___Music_Library.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
 
-                    b.HasKey("Id");
+                    b.HasKey("ArtistId");
 
                     b.ToTable("Artists");
-                });
-
-            modelBuilder.Entity("C__MVC___Music_Library.Models.Track", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AlbumId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(30);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlbumId");
-
-                    b.HasIndex("ArtistId");
-
-                    b.ToTable("Tracks");
                 });
 
             modelBuilder.Entity("C__MVC___Music_Library.Models.Album", b =>
                 {
                     b.HasOne("C__MVC___Music_Library.Models.Artist", "Artist")
-                        .WithMany()
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("C__MVC___Music_Library.Models.Track", b =>
-                {
-                    b.HasOne("C__MVC___Music_Library.Models.Album", "Album")
-                        .WithMany()
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("C__MVC___Music_Library.Models.Artist", "Artist")
-                        .WithMany()
+                        .WithMany("Albums")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

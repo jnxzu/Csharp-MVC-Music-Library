@@ -5,3 +5,5 @@ Properties
 *.csproj
 features.txt
 *.db
+Migrations
+.gitignore

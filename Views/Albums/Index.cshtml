@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Artist)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -37,9 +40,12 @@
                 @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.Artist.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AlbumId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
             </td>
         </tr>
 }

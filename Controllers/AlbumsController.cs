@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using C__MVC___Music_Library.Data;
 using C__MVC___Music_Library.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace C__MVC___Music_Library.Controllers
 {
@@ -23,7 +22,8 @@ namespace C__MVC___Music_Library.Controllers
         // GET: Albums
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Albums.ToListAsync());
+            var musicLibContext = _context.Albums.Include(a => a.Artist);
+            return View(await musicLibContext.ToListAsync());
         }
 
         // GET: Albums/Details/5
@@ -35,7 +35,8 @@ namespace C__MVC___Music_Library.Controllers
             }
 
             var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
             if (album == null)
             {
                 return NotFound();
@@ -45,19 +46,18 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // GET: Albums/Create
-        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistId", "Name");
             return View();
         }
 
         // POST: Albums/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ReleaseDate,Rating")] Album album)
+        public async Task<IActionResult> Create([Bind("AlbumId,Name,ReleaseDate,Rating,ArtistId")] Album album)
         {
             if (ModelState.IsValid)
             {
@@ -65,11 +65,11 @@ namespace C__MVC___Music_Library.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistId", "Name", album.ArtistId);
             return View(album);
         }
 
         // GET: Albums/Edit/5
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,18 +82,18 @@ namespace C__MVC___Music_Library.Controllers
             {
                 return NotFound();
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistId", "Name", album.ArtistId);
             return View(album);
         }
 
         // POST: Albums/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ReleaseDate,Rating")] Album album)
+        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,Name,ReleaseDate,Rating,ArtistId")] Album album)
         {
-            if (id != album.Id)
+            if (id != album.AlbumId)
             {
                 return NotFound();
             }
@@ -107,7 +107,7 @@ namespace C__MVC___Music_Library.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AlbumExists(album.Id))
+                    if (!AlbumExists(album.AlbumId))
                     {
                         return NotFound();
                     }
@@ -118,11 +118,11 @@ namespace C__MVC___Music_Library.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistId", "Name", album.ArtistId);
             return View(album);
         }
 
         // GET: Albums/Delete/5
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,7 +131,8 @@ namespace C__MVC___Music_Library.Controllers
             }
 
             var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
             if (album == null)
             {
                 return NotFound();
@@ -141,7 +142,6 @@ namespace C__MVC___Music_Library.Controllers
         }
 
         // POST: Albums/Delete/5
-        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -154,7 +154,7 @@ namespace C__MVC___Music_Library.Controllers
 
         private bool AlbumExists(int id)
         {
-            return _context.Albums.Any(e => e.Id == id);
+            return _context.Albums.Any(e => e.AlbumId == id);
         }
     }
 }

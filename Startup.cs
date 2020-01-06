@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using C__MVC___Music_Library.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace C__MVC___Music_Library
 {
@@ -24,6 +25,8 @@ namespace C__MVC___Music_Library
 
             services.AddDbContext<MusicLibContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("MusicLibContext")));
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<MusicLibContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,13 +47,14 @@ namespace C__MVC___Music_Library
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Artists}/{action=Index}/{id?}");
             });
         }
     }
