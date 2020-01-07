@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace C__MVC___Music_Library.Models
+namespace MusicLib.Models
 {
     public class Album
     {

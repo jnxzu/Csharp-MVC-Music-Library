@@ -1,7 +1,7 @@
-using C__MVC___Music_Library.Models;
+using MusicLib.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace C__MVC___Music_Library.Data
+namespace MusicLib.Data
 {
     public class MusicLibContext : DbContext
     {

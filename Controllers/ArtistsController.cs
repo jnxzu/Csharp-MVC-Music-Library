@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using C__MVC___Music_Library.Data;
-using C__MVC___Music_Library.Models;
+using MusicLib.Data;
+using MusicLib.Models;
 
-namespace C__MVC___Music_Library.Controllers
+namespace MusicLib.Controllers
 {
     public class ArtistsController : Controller
     {

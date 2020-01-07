@@ -4,10 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using C__MVC___Music_Library.Data;
+using MusicLib.Data;
 using Microsoft.AspNetCore.Identity;
+using MusicLib.Models;
 
-namespace C__MVC___Music_Library
+namespace MusicLib
 {
     public class Startup
     {
@@ -21,12 +22,32 @@ namespace C__MVC___Music_Library
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-
             services.AddDbContext<MusicLibContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("MusicLibContext")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<MusicLibContext>();
+            services.AddDbContext<AuthContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("AuthContext")));
+
+            services.AddMvc();
+
+            services.AddIdentityCore<ApplicationUser>(o =>
+            {
+                o.Password.RequireDigit = true;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 6;
+            })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AuthContext>()
+                .AddSignInManager()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = IdentityConstants.ApplicationScheme;
+                o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddIdentityCookies(o => { });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

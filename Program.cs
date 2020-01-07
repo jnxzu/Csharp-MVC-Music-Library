@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace C__MVC___Music_Library
+namespace MusicLib
 {
     public class Program
     {
