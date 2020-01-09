@@ -30,8 +30,8 @@ namespace C__MVC___Music_Library.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(60);
 
-                    b.Property<decimal>("Rating")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("TEXT");
@@ -49,10 +49,17 @@ namespace C__MVC___Music_Library.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Genres")
+                        .HasColumnType("TEXT")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
+
+                    b.Property<int>("Popularity")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ArtistId");
 

@@ -1,13 +1,11 @@
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using MusicLib.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using MusicLib.Models.AccountViewModels;
+using System.Diagnostics;
 
 namespace MusicLib.Controllers
 {
@@ -27,16 +25,11 @@ namespace MusicLib.Controllers
                 var role = new IdentityRole();
                 role.Name = "Admin";
                 await _roleManager.CreateAsync(role);
-
                 //Here we create a Admin super user who will maintain the website                   
-
                 var user = new ApplicationUser();
                 user.UserName = "administrator";
-
                 var userPWD = "4dminpw";
-
                 var chkUser = await _userManager.CreateAsync(user, userPWD);
-
                 //Add default User to Role Admin    
                 if (chkUser.Succeeded) await _userManager.AddToRoleAsync(user, "Admin");
             }
@@ -57,28 +50,29 @@ namespace MusicLib.Controllers
         //
         // GET: /Account/Login
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        [Route("/")]
+        [Route("Login")]
+        public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Albums");
-            ViewData["ReturnUrl"] = returnUrl;
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Artists");
             return View();
         }
 
         //
         // POST: /Account/Login
+        [Route("Login")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             await initAdmin();
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Artists");
                 }
                 else
                 {
@@ -94,20 +88,20 @@ namespace MusicLib.Controllers
         //
         // GET: /Account/Register
         [HttpGet]
-        public IActionResult Register(string returnUrl = null)
+        [Route("Register")]
+        public IActionResult Register()
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Albums");
-            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         //
         // POST: /Account/Register
         [HttpPost]
+        [Route("Register")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Login };
@@ -116,7 +110,7 @@ namespace MusicLib.Controllers
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Artists");
                 }
                 AddErrors(result);
             }
@@ -137,6 +131,12 @@ namespace MusicLib.Controllers
             return RedirectToAction("Index", "Albums");
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -150,18 +150,6 @@ namespace MusicLib.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
-        }
-
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Albums");
-            }
         }
 
         #endregion

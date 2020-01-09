@@ -1,17 +1,36 @@
 @model IEnumerable<MusicLib.Models.Artist>
+@using MusicLib.Helpers
 
 <h1>Artists</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (this.User.IsInRole("Admin")){
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<form asp-controller="Artists" asp-action="Index" method="get">
+    <p>
+        Name: <input type="text" name="name">
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Popularity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genres)
+            </th>
+            @if (this.User.IsInRole("Admin")){
+                <th></th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -21,10 +40,14 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ArtistId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ArtistId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ArtistId">Delete</a>
+                @Html.DisplayFor(modelItem => item.Popularity)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genres)
+            </td>
+            @if (this.User.IsInRole("Admin")){
+                @CustomHelpers.ControlGroup("Artists", @item.ArtistId)
+            }
         </tr>
 }
     </tbody>

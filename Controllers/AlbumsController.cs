@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MusicLib.Data;
 using MusicLib.Models;
 
-namespace MusicLib.Controllers
+namespace C__MVC___Music_Library.Controllers
 {
     public class AlbumsController : Controller
     {
@@ -20,10 +21,30 @@ namespace MusicLib.Controllers
         }
 
         // GET: Albums
-        public async Task<IActionResult> Index()
+        [Route("Albums")]
+        public async Task<IActionResult> Index(string albumArtist)
         {
-            var musicLibContext = _context.Albums.Include(a => a.Artist);
-            return View(await musicLibContext.ToListAsync());
+            IQueryable<string> artistQuery = from a in _context.Albums
+                                             orderby a.Artist.Name
+                                             select a.Artist.Name;
+
+            var movieGenreVM = new AlbumArtistViewModel
+            {
+                Artists = new SelectList(await artistQuery.Distinct().ToListAsync()),
+            };
+
+            if (!string.IsNullOrEmpty(albumArtist))
+            {
+                var albums = _context.Albums.Include(a => a.Artist).Where(x => x.Artist.Name == albumArtist);
+                movieGenreVM.Albums = await albums.ToListAsync();
+                return View(movieGenreVM);
+            }
+            else
+            {
+                var albums = _context.Albums.Include(a => a.Artist);
+                movieGenreVM.Albums = await albums.ToListAsync();
+                return View(movieGenreVM);
+            }
         }
 
         // GET: Albums/Details/5
@@ -46,6 +67,7 @@ namespace MusicLib.Controllers
         }
 
         // GET: Albums/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistId", "Name");
@@ -53,9 +75,8 @@ namespace MusicLib.Controllers
         }
 
         // POST: Albums/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AlbumId,Name,ReleaseDate,Rating,ArtistId")] Album album)
         {
@@ -70,6 +91,8 @@ namespace MusicLib.Controllers
         }
 
         // GET: Albums/Edit/5
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,9 +110,8 @@ namespace MusicLib.Controllers
         }
 
         // POST: Albums/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("AlbumId,Name,ReleaseDate,Rating,ArtistId")] Album album)
         {
@@ -123,6 +145,7 @@ namespace MusicLib.Controllers
         }
 
         // GET: Albums/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,6 +166,7 @@ namespace MusicLib.Controllers
 
         // POST: Albums/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
