@@ -23,10 +23,11 @@ namespace C__MVC___Music_Library.Controllers
         public async Task<IActionResult> Index(string name)
         {
             var artists = from a in _context.Artists
+                          orderby a.Popularity descending
                           select a;
             if (!String.IsNullOrEmpty(name))
             {
-                artists = artists.Where(s => s.Name.Contains(name));
+                artists = artists.Where(s => s.Name.Contains(name)).OrderByDescending(x => x.Popularity);
             }
             return View(await artists.ToListAsync());
         }
