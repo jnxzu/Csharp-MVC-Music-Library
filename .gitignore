@@ -6,5 +6,4 @@ Properties
 features.txt
 *.db
 Migrations
-.gitignore
 wwwroot
