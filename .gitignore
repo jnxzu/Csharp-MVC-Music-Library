@@ -6,4 +6,5 @@ Properties
 features.txt
 *.db
 Migrations
+.vscode
 wwwroot
